@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 
@@ -49,6 +51,8 @@ public class BankingInquiries {
     //El sistema debe permitir consultar los saldos disponibles en sus productos como: cuentas bancarias y tarjetas de crédito.
     @GetMapping("GetBankBalance/{id}")
     @ResponseBody
+    @CircuitBreaker(name="consultsCircuit")
+    @TimeLimiter(name="consultsTime")
     public ResponseEntity<Map<String, Object>> GetBankBalance(@PathVariable("id") String id){
         Map<String, Object> salida = new HashMap<>();
         //Obtener data del producto 
@@ -77,6 +81,8 @@ public class BankingInquiries {
     //microservicio: obtener todos los movimientos por producto
     @GetMapping("GetTransactionsByProduct/{id}")
     @ResponseBody
+    @CircuitBreaker(name="consultsCircuit")
+    @TimeLimiter(name="consultsTime")
     public ResponseEntity<Map<String, Object>> GetTransactionsByProduct(@PathVariable("id") String id){
         Map<String, Object> salida = new HashMap<>();
         //Validar id del cliente
@@ -94,6 +100,8 @@ public class BankingInquiries {
     //Para un cliente se debe generar un resumen con los saldos promedio diarios del mes en curso de todos los productos de crédito o cuentas bancarias que posee.
     @GetMapping("/GetProductReport")
     @ResponseBody
+    @CircuitBreaker(name="consultsCircuit")
+    @TimeLimiter(name="consultsTime")
     public ResponseEntity<Map<String, Object>> GetProductReport(@RequestParam String id, @RequestParam String startDate, @RequestParam String endDate){
         log.info("entrada GetProductReport");
         Map<String, Object> salida = new HashMap<>();   
@@ -163,6 +171,8 @@ public class BankingInquiries {
     //Generar un reporte de todas las comisiones cobradas por producto en un periodo de tiempo
     @GetMapping("/GetCommissionReport")
     @ResponseBody
+    @CircuitBreaker(name="consultsCircuit")
+    @TimeLimiter(name="consultsTime")
     public ResponseEntity<Map<String, Object>> GetCommissionReport(@RequestParam String id, @RequestParam String startDate, @RequestParam String endDate){
         log.info("entrada GetCommissionReport");
         Map<String, Object> salida = new HashMap<>();   
