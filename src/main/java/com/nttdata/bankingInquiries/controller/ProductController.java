@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
+
 
 @RestController
 @RequestMapping("/product")
@@ -28,17 +31,23 @@ public class ProductController {
     private ProductRepository productRepo;
     //CRUD
     @GetMapping(value = "/all")
+    @CircuitBreaker(name="consultsCircuit")
+    @TimeLimiter(name="consultsTime")
     public List<Product> getAll() {
         return productService.getAll();
     } 
 
     @PostMapping(value = "/create")
+    @CircuitBreaker(name="consultsCircuit")
+    @TimeLimiter(name="consultsTime")
     public Product createProduct(@RequestBody Product new_produc){
         new_produc.setStatus("ACTIVE");
         return productService.createProduct(new_produc);
     }
 
     @PutMapping("/update/{id}")
+    @CircuitBreaker(name="consultsCircuit")
+    @TimeLimiter(name="consultsTime")
     public ResponseEntity<Product> updateProduct(@PathVariable("id") String id, @RequestBody Product temp) {
       Optional<Product> product = productRepo.findById(id);
       if (product.isPresent()) {
@@ -50,6 +59,8 @@ public class ProductController {
     }
 
     @PutMapping("setInactive/{id}")
+    @CircuitBreaker(name="consultsCircuit")
+    @TimeLimiter(name="consultsTime")
     public ResponseEntity<Product> setInactive(@PathVariable("id") String id) {
       Optional<Product> product_dov = productRepo.findById(id);
       if (product_dov.isPresent()) {
